@@ -1,0 +1,2 @@
+# xspotscrap
+scrap gmaps
