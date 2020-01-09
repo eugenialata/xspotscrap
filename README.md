@@ -55,3 +55,26 @@ This is the file that will store the google places search keywords. Enter the ke
 This will contain the scraped data organised by the scraped date.
 ![data delivery folder](https://i.ibb.co/QrrZjHw/image.png)
 
+
+## Updating the crawler(after the developer has pushed changes to github)
+1. Open terminal
+
+2. Navigate inside the project directory
+```sh
+cd xspotscrap
+```
+3. Pull the changes
+```sh
+git commit -am "pushing changes if any"
+git pull origin master
+```
+4. Install requirements for Nodejs(This will take sometime)
+```sh
+npm install
+```
+5. Install requirements for python
+```sh
+pip install -r requirements.txt
+```
+
+
