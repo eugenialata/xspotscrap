@@ -18,7 +18,7 @@ git clone https://github.com/eugenialata/xspotscrap
 ```sh
 cd xspotscrap
 ```
-4. install requirements for Nodejs(This will take sometime)
+4. Install requirements for Nodejs(This will take sometime)
 ```sh
 npm install
 ```
@@ -26,3 +26,15 @@ npm install
 ```sh
 pip install -r requirements.txt
 ```
+
+## Understanding the Project
+#### These are the main files that you as a user should be familiar with
+
+1. `input.csv`
+This is the file that will store the google places search keywords. Enter the keywords seperated by new line. For example
+![input file](https://i.ibb.co/P4HGWR7/On-Paste-20200109-212026.png)
+
+2. `data_delivery` Folder.
+This will contain the scraped data organised by the scraped date.
+![data delivery folder](https://i.ibb.co/QrrZjHw/image.png)
+
