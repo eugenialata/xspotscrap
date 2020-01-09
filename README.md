@@ -27,6 +27,23 @@ npm install
 pip install -r requirements.txt
 ```
 
+## Doing a Crawl
+1. Make sure you have updated the `input.csv` file.
+2. Open terminal
+3. Navigate inside the project directory.
+```sh
+cd xspotscrap
+```
+4. Run the crawler
+```sh
+node maps_scraper.js
+```
+
+5. After the crawler is finished. Export the report
+```sh
+python generate_data.py
+```
+
 ## Understanding the Project
 #### These are the main files that you as a user should be familiar with
 
