@@ -1,0 +1,20 @@
+{
+  "name": "google_maps_crawler",
+  "version": "1.0.0",
+  "description": "Google maps crawler that searches for places and find the relevent information from Instagram and Facebook",
+  "main": "maps_scraper.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "node",
+    "google",
+    "instagram",
+    "faceboook"
+  ],
+  "author": "Amit Upreti",
+  "license": "ISC",
+  "dependencies": {
+    "apify": "^0.18.0"
+  }
+}
