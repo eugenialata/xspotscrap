@@ -2,6 +2,19 @@
 
 ## Installation and setup
 
+
+## Install brew,node if you dont have it already in you macosx
+* Install brew
+```sh
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
+* Install node
+```sh
+brew install node
+```
+
+
+
 ### MAC OSX and LINUX
 
 1. Open terminal
@@ -25,6 +38,10 @@ npm install
 5. Install requirements for python
 ```sh
 pip install -r requirements.txt
+```
+if above fails
+```sh
+pip3 install -r requirements.txt
 ```
 
 ## Doing a Crawl
