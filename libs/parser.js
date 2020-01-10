@@ -18,16 +18,22 @@ async function CrawlPlace({request, page, puppeteerPool}) {
     let total = handler.length;
     console.log(total, 'results found');
     let i = 1;
-    for (let i = 0; i < total; i += 1) {
+    for (let i = 0; i < total - 1; i += 1) {
         await page.waitForSelector('div.section-result');
         const handles = await page.$$('div.section-result');
         await Apify.utils.sleep(1000);
         console.log('inside the results section');
         await handles[i].click();
-
-        await page.waitForSelector('[data-section-id="ad"] .widget-pane-link');
-
-        page = await parseIndividualLocation({page, i});
+        try {
+            await page.waitForSelector('[data-section-id="ad"] .widget-pane-link');
+        } catch (e) {
+            await handles[i].click();
+        }
+        try {
+            page = await parseIndividualLocation({page, i});
+        } catch (e) {
+            console.log(e);
+        }
         page = await getBackToResults({page});
     }
 

@@ -55,15 +55,37 @@ class Crawler extends PuppeteerCrawler {
         console.log(`Processing ${request.url}`);
         // A function to be evaluated by Puppeteer within the browser context.
         await Apify.utils.sleep(2000);
-        await page.waitForSelector('div.section-result');
+        try {
+            await page.waitForSelector('div.section-result');
+        }
+        catch (e) {
+            throw 'page not loaded'
+        }
         // await page._client.send("Page.stopLoading");
 
         let contents = await page.content();
         const $ = cheerio.load(contents);
         let title = $('title').text();
-        let data = await parser.CrawlPlace({request, page, puppeteerPool});
 
+        let data = await parser.CrawlPlace({request, page, puppeteerPool});
+        // if next button is available go to next page
         //goto next page
+        let looper = true
+        while (looper) {
+            try {
+                await page.waitForSelector('button[jsaction="pane.paginationSection.nextPage"]', {timeout: 10000});
+                await page.click('button[jsaction="pane.paginationSection.nextPage"]');
+                await Apify.utils.sleep(2000);
+                await page.waitForSelector('div.section-result');
+                await parser.CrawlPlace({request, page, puppeteerPool});
+
+            } catch (error) {
+                console.log(error);
+                console.log("Next complete")
+                looper = false;
+            }
+        }
+
         // await page.click('button[jsaction="pane.paginationSection.nextPage"]');
         console.log('Crawling compelte for this search term');
         // await puppeteerPool.retire(page.browser);
@@ -102,10 +124,13 @@ Apify.main(async () => {
     options.minConcurrency = 1;
     options.maxConcurrency = 1;
     options.handlePageTimeoutSecs = 9999;
-    options.puppeteerPoolOptions.stealth = false;
+    options.puppeteerPoolOptions.stealth = true;
 
-    options.puppeteerPoolOptions.retireInstanceAfterRequestCount = 1;
-    options.launchPuppeteerOptions.headless = false;
+    options.puppeteerPoolOptions.retireInstanceAfterRequestCount = 10;
+    options.launchPuppeteerOptions.headless = true;
+    options.puppeteerPoolOptions.recycleDiskCache = true;
+    options.launchPuppeteerOptions.useChrome = true;
+
     crawler = new Crawler(options);
 
     // Run the crawler and wait for it to finish.
