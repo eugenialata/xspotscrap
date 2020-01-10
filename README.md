@@ -12,7 +12,10 @@
 ```sh
 brew install node
 ```
-
+Install python if you dont have it installed
+```sh
+brew install python
+```
 
 
 ### MAC OSX and LINUX
