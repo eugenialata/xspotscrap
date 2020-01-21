@@ -8,6 +8,7 @@ const Apify = require('apify');
 
 
 async function CrawlPlace({request, page, puppeteerPool}) {
+    console.log('test')
     let contents = await page.content();
     const $ = cheerio.load(contents);
     let title = $('title').text();
@@ -25,7 +26,7 @@ async function CrawlPlace({request, page, puppeteerPool}) {
         console.log('inside the results section');
         await handles[i].click();
         try {
-            await page.waitForSelector('[data-section-id="ad"] .widget-pane-link');
+            await page.waitForSelector('[data-section-id="ad"] .widget-pane-link', {timeout: 4000});
         } catch (e) {
             await handles[i].click();
         }
@@ -53,7 +54,7 @@ async function parseIndividualLocation({page, i}) {
      */
 
 
-    let name = $('h1').text();
+    let name = $('h1[class="GLOBAL__gm2-headline-5 section-hero-header-title-title"]').text();
     let address = $('[data-section-id="ad"] .widget-pane-link').text().trim();
     let category = $('[jsaction="pane.rating.category"]').text().trim();
     let phone = $('[data-section-id="pn0"].section-info-speak-numeral').length
@@ -173,7 +174,7 @@ async function CrawlInstagram({page, name}) {
     try {
         placeId = data['places'][0]['place']['location']['pk'] || '';
     } catch (e) {
-        console.log('place id not found', e);
+        console.log('place id not found');
         placeId = '';
     }
 
@@ -181,7 +182,7 @@ async function CrawlInstagram({page, name}) {
     try {
         username = data['users'][0]['user']['username'] || '';
     } catch (e) {
-        console.log('userId not found', e);
+        console.log('userId not found');
         username = '';
     }
 
@@ -189,7 +190,7 @@ async function CrawlInstagram({page, name}) {
     try {
         userId = data['users'][0]['user']['pk'] || '';
     } catch (e) {
-        console.log('userid not found', e);
+        console.log('userid not found');
         userId = '';
     }
 
@@ -197,7 +198,7 @@ async function CrawlInstagram({page, name}) {
     try {
         profilePic = data['users'][0]['user']['profile_pic_url'] || '';
     } catch (e) {
-        console.log('userid not found', e);
+        console.log('profilepic not found', );
         profilePic = '';
     }
     console.log('instagram search done');
@@ -219,7 +220,7 @@ async function CrawlFacebook({page, name, location}) {
     try {
         profileUrl = $('a[aria-label="Profile picture"] img').attr('src') || '';
     } catch (e) {
-        console.log('Cannot find facebook url', e);
+        console.log('Cannot find facebook url');
 
     }
 

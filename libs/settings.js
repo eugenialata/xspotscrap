@@ -6,7 +6,7 @@ const options = {
 
     puppeteerPoolOptions: {
         // proxyUrls: [],
-        retireInstanceAfterRequestCount: 10, // Will use one proxy for 10 pages.
+        // retireInstanceAfterRequestCount: 10, // Will use one proxy for 10 pages.
     },
     handlePageFunction: () => {},
     handleFailedRequestFunction: () => {},

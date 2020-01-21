@@ -25,14 +25,14 @@ class Crawler extends PuppeteerCrawler {
 
 
     async goto({request, page}) {
-        await page.evaluateOnNewDocument(() => {
-            Object.defineProperty(navigator, 'webdriver', {
-                get: () => false,
-            });
-        });
+        // await page.evaluateOnNewDocument(() => {
+        //     Object.defineProperty(navigator, 'webdriver', {
+        //         get: () => false,
+        //     });
+        // });
         // await stealth_mode.hideWebDriver({page: page});
         // await stealth_mode.hackPermissions({page: page});
-        await stealth_mode.addLanguage({page: page});
+        // await stealth_mode.addLanguage({page: page});
         // await stealth_mode.emulateWebGL({page: page});
         // await stealth_mode.emulateWindowFrame({page: page});
         // await stealth_mode.addPlugins({page: page});
@@ -44,33 +44,34 @@ class Crawler extends PuppeteerCrawler {
         // await stealth_mode.emulateConnection({page: page});
 
         // await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36');
-        await page.setDefaultTimeout(120000);
-
+        // await page.setDefaultTimeout(120000);
+        await page.goto(request.url);
         return await page.goto(request.url);
 
     }
 
+    async getHrefs(page, selector) {
+        return await page.$$eval(selector, anchors => [].map.call(anchors, a => a.href));
+    }
 
     async handlePage({request, page, puppeteerPool}) {
         console.log(`Processing ${request.url}`);
-        // A function to be evaluated by Puppeteer within the browser context.
         await Apify.utils.sleep(2000);
+
+
         try {
-            await page.waitForSelector('div.section-result');
-        }
-        catch (e) {
+            await page.waitForSelector('div.section-result', {timeout: 10000});
+        } catch (e) {
             throw 'page not loaded'
         }
-        // await page._client.send("Page.stopLoading");
-
         let contents = await page.content();
         const $ = cheerio.load(contents);
         let title = $('title').text();
 
-        let data = await parser.CrawlPlace({request, page, puppeteerPool});
+        let data = await parser.CrawlPlace({request: request, page: page, puppeteerPool: puppeteerPool});
         // if next button is available go to next page
         //goto next page
-        let looper = true
+        let looper = true;
         while (looper) {
             try {
                 await page.waitForSelector('button[jsaction="pane.paginationSection.nextPage"]', {timeout: 10000});
@@ -81,19 +82,16 @@ class Crawler extends PuppeteerCrawler {
 
             } catch (error) {
                 console.log(error);
-                console.log("Next complete")
+                console.log("Next complete");
                 looper = false;
             }
         }
 
-        // await page.click('button[jsaction="pane.paginationSection.nextPage"]');
-        console.log('Crawling compelte for this search term');
-        // await puppeteerPool.retire(page.browser);
-
-        console.log(`Title: ${title}`);
+        console.log('Crawling compelte for this', request.userData.searchTerm);
 
 
     }
+
 
     async handleFailedRequest() {
         console.log(`Request ${request.url} failed too many times`);
@@ -106,12 +104,14 @@ Apify.main(async () => {
     // delete the old apify_storage files
     await utils.deleteFolderRecursive('apify_storage');
     const requestQueue = await Apify.openRequestQueue('mapsScraper');
-    const searchTerms = fs.readFileSync('input.csv').toString().split('\n');
+    const searchTerms = fs.readFileSync('input.csv').toString().trim().split('\n');
     for (let i = 0; i < searchTerms.length; i += 1) {
-        const searchTerm = searchTerms[i];
+
+        let searchTerm = searchTerms[i];
+        searchTerm = searchTerm.split(' ').join('+');
         await requestQueue.addRequest({
-            url: `https://www.google.com/maps/search/${searchTerm}/?hl=en`,
-            userData: {searchTerm: searchTerm}
+            url: `https://www.google.com/maps/search/${searchTerm}?hl=en`,
+            userData: {searchTerm: searchTerm, type: 'search'}
         });
     }
 
@@ -121,14 +121,13 @@ Apify.main(async () => {
     options.requestQueue = requestQueue;
     options.maxRequestRetries = 30;
 
-    options.minConcurrency = 1;
-    options.maxConcurrency = 1;
+    options.minConcurrency = 5;
+    options.maxConcurrency = 5;
     options.handlePageTimeoutSecs = 9999;
-    options.puppeteerPoolOptions.stealth = true;
 
-    options.puppeteerPoolOptions.retireInstanceAfterRequestCount = 10;
-    options.launchPuppeteerOptions.headless = true;
-    options.puppeteerPoolOptions.recycleDiskCache = true;
+    options.puppeteerPoolOptions.retireInstanceAfterRequestCount = 5;
+    options.launchPuppeteerOptions.headless = false;
+    // options.puppeteerPoolOptions.useIncognitoPages = true;
     options.launchPuppeteerOptions.useChrome = true;
 
     crawler = new Crawler(options);
