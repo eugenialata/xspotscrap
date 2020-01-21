@@ -126,7 +126,7 @@ Apify.main(async () => {
     options.handlePageTimeoutSecs = 9999;
 
     options.puppeteerPoolOptions.retireInstanceAfterRequestCount = 5;
-    options.launchPuppeteerOptions.headless = false;
+    options.launchPuppeteerOptions.headless = true;
     // options.puppeteerPoolOptions.useIncognitoPages = true;
     options.launchPuppeteerOptions.useChrome = true;
 
