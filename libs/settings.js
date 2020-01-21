@@ -1,7 +1,7 @@
 const options = {
     launchPuppeteerOptions: {
         headless: true,
-        stealth: true
+        // stealth: true
     },
     maxRequestRetries: 10,
 

@@ -25,11 +25,11 @@ class Crawler extends PuppeteerCrawler {
 
 
     async goto({request, page}) {
-        // await page.evaluateOnNewDocument(() => {
-        //     Object.defineProperty(navigator, 'webdriver', {
-        //         get: () => false,
-        //     });
-        // });
+        await page.evaluateOnNewDocument(() => {
+            Object.defineProperty(navigator, 'webdriver', {
+                get: () => false,
+            });
+        });
         // await stealth_mode.hideWebDriver({page: page});
         // await stealth_mode.hackPermissions({page: page});
         // await stealth_mode.addLanguage({page: page});
@@ -125,8 +125,8 @@ Apify.main(async () => {
     options.maxConcurrency = 5;
     options.handlePageTimeoutSecs = 9999;
 
-    options.puppeteerPoolOptions.retireInstanceAfterRequestCount = 5;
-    options.launchPuppeteerOptions.headless = true;
+    options.puppeteerPoolOptions.retireInstanceAfterRequestCount = 100;
+    // options.launchPuppeteerOptions.headless = false;
     // options.puppeteerPoolOptions.useIncognitoPages = true;
     options.launchPuppeteerOptions.useChrome = true;
 
